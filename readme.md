@@ -1,4 +1,7 @@
-# xofttion-utils
+# @xofttion-utils
 
 Utility library compatible with Typescript projects.
-Author: Daniel Andrés Castillo Pedroza
+
+<p>
+  <b>Author:</b> Daniel Andrés Castillo Pedroza
+</p>

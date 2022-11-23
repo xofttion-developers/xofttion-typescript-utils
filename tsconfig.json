@@ -22,7 +22,7 @@
   "files": [
     "src/@types/index.d.ts"
   ],
-  "include": ["node_modules/@types/**/*.d.ts", "src/**/*.d.ts"],
+  "include": ["src", "node_modules/@types/**/*.d.ts", "src/**/*.d.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
