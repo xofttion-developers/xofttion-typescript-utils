@@ -1,7 +1,23 @@
 const PRIMITIVES = [Date, RegExp, Function, String, Boolean, Number];
 const prototypeToString = Object.prototype.toString;
 
-function cloneObject<T>(object: Undefined<T>, caches: unknown[]): Undefined<T> {
+export function deepClone<A>(object: A): A {
+  return clone(object, []);
+}
+
+export function deepFreeze<A>(object: A): Readonly<A> {
+  for (const prop in object) {
+    const value = object[prop];
+
+    if (typeof value === 'object' && !Object.isFrozen(value)) {
+      deepFreeze(value);
+    }
+  }
+
+  return Object.freeze(object);
+}
+
+function clone<A>(object: A, caches: unknown[]): A {
   if (typeof object !== 'object') {
     return object;
   }
@@ -10,7 +26,7 @@ function cloneObject<T>(object: Undefined<T>, caches: unknown[]): Undefined<T> {
     const [objectCache] = caches.filter((objectCache) => objectCache === object);
 
     if (objectCache) {
-      return objectCache as T;
+      return objectCache as A;
     }
 
     caches.push(object);
@@ -23,15 +39,11 @@ function cloneObject<T>(object: Undefined<T>, caches: unknown[]): Undefined<T> {
     return new constructorObject(object);
   }
 
-  const objectClone: T = new constructorObject();
+  const objectClone: A = new constructorObject();
 
   for (const prop in object) {
-    objectClone[prop] = cloneObject(object[prop], caches) as any;
+    objectClone[prop] = clone(object[prop], caches) as any;
   }
 
   return objectClone;
-}
-
-export function deepClone<T>(object: Undefined<T>): Undefined<T> {
-  return cloneObject(object, []);
 }

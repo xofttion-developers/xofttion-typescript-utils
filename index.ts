@@ -1,8 +1,11 @@
-import { deepClone } from './src/index';
+import { deepClone, deepFreeze } from './src/index';
 
 class Person {
-  constructor(public name: string, public age: number, private _happy = true) {
-  }
+  public h = {
+    a: 20
+  };
+
+  constructor(public name: string, public age: number, private _happy = true) {}
 
   public get happy(): boolean {
     return this._happy;
@@ -36,3 +39,13 @@ console.log(p3);
 console.log(p3.happy);
 console.log(p4);
 console.log(p4?.happy);
+
+const p5 = new Person('Milton Castillo', 30);
+const cloneP5 = deepClone(p5);
+
+const p6 = deepFreeze(cloneP5);
+
+p5.unhappy();
+
+console.log(p5);
+console.log(p6);
