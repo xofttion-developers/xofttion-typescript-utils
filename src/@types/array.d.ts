@@ -4,9 +4,9 @@ declare global {
 
     exists(element: T): boolean;
 
-    first(): T | null;
+    firstElement(): T | null;
 
-    last(): T | null;
+    lastElement(): T | null;
 
     remove(index: number | T): T[];
   }
