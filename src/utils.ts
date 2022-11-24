@@ -103,8 +103,8 @@ export function forEach<T>(array: T[], callEach: FnEach, callStop?: FnStop): boo
 
     return true;
   } catch (error) {
-    if (error instanceof ForEachBreakException && callStop) {
-      callStop(error.element, error.index);
+    if (callStop && error instanceof ForEachBreakException) {
+      callStop(error.element as T, error.index);
     }
 
     return false;
