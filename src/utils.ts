@@ -20,46 +20,6 @@ class ForEachBreakException<T> extends Error {
   }
 }
 
-export function isDefined(object: any): boolean {
-  return typeof object !== 'undefined' && object !== null;
-}
-
-export function isUndefined(object: any): boolean {
-  return !isDefined(object);
-}
-
-export function parseBoolean(value: any): boolean {
-  return !(isUndefined(value) || value === false || FALSY_VALUES.includes(value));
-}
-
-export function deepClone<A>(object: A): A {
-  return clone(object, []);
-}
-
-export function pushElement<T>(array: T[], element: T): T[] {
-  return [...array, element];
-}
-
-export function removeElement<T>(array: T[], element: T): T[] {
-  return array.filter((value) => value !== element);
-}
-
-export function changeElement<T>(array: T[], old: T, element: T): T[] {
-  return array.map((value) => (value === old ? element : value));
-}
-
-export function deepFreeze<A>(object: A): Readonly<A> {
-  for (const prop in object) {
-    const value = object[prop];
-
-    if (typeof value === 'object' && !Object.isFrozen(value)) {
-      deepFreeze(value);
-    }
-  }
-
-  return Object.freeze(object);
-}
-
 function clone<A>(object: A, caches: unknown[]): A {
   if (typeof object !== 'object') {
     return object;
@@ -91,7 +51,31 @@ function clone<A>(object: A, caches: unknown[]): A {
   return objectClone;
 }
 
-export function forEach<T>(array: T[], callEach: FnEach, callStop?: FnStop): boolean {
+export function isDefined(object: any): boolean {
+  return typeof object !== 'undefined' && object !== null;
+}
+
+export function isUndefined(object: any): boolean {
+  return !isDefined(object);
+}
+
+export function parseBoolean(value: any): boolean {
+  return !(isUndefined(value) || value === false || FALSY_VALUES.includes(value));
+}
+
+export function pushElement<T>(array: T[], element: T): T[] {
+  return [...array, element];
+}
+
+export function removeElement<T>(array: T[], element: T): T[] {
+  return array.filter((value) => value !== element);
+}
+
+export function changeElement<T>(array: T[], old: T, element: T): T[] {
+  return array.map((value) => (value === old ? element : value));
+}
+
+export function each<T>(array: T[], callEach: FnEach, callStop?: FnStop): boolean {
   try {
     array.forEach((element, index) => {
       const shouldStop = callEach(element, index);
@@ -109,4 +93,20 @@ export function forEach<T>(array: T[], callEach: FnEach, callStop?: FnStop): boo
 
     return false;
   }
+}
+
+export function deepClone<A>(object: A): A {
+  return clone(object, []);
+}
+
+export function deepFreeze<A>(object: A): Readonly<A> {
+  for (const prop in object) {
+    const value = object[prop];
+
+    if (typeof value === 'object' && !Object.isFrozen(value)) {
+      deepFreeze(value);
+    }
+  }
+
+  return Object.freeze(object);
 }

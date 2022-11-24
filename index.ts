@@ -1,4 +1,6 @@
-import { deepClone, deepFreeze } from './src/index';
+import { deepClone, deepFreeze, Either } from './src/index';
+
+const result = Either.right(10);
 
 class Person {
   public h = {
@@ -49,3 +51,9 @@ p5.unhappy();
 
 console.log(p5);
 console.log(p6);
+
+result.fold({
+  right: (value) => {
+    console.log(value);
+  }
+})
