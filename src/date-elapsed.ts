@@ -1,10 +1,10 @@
-export const YEAR_MILISECONDS = 31536000000;
-export const MONTH_MILISECONDS = 2592000000;
-export const WEEK_MILISECONDS = 604800000;
-export const DAY_MILISECONDS = 86400000;
-export const HOUR_MILISECONDS = 3600000;
-export const MINUTE_MILISECONDS = 60000;
-export const SECOND_MILISECONDS = 1000;
+export const MILISECONDS_YEAR = 31536000000;
+export const MILISECONDS_MONTH = 2592000000;
+export const MILISECONDS_WEEK = 604800000;
+export const MILISECONDS_DAY = 86400000;
+export const MILISECONDS_HOUR = 3600000;
+export const MILISECONDS_MINUTE = 60000;
+export const MILISECONDS_SECOND = 1000;
 
 interface ElapsedTime {
   value: number;
@@ -42,13 +42,13 @@ function createElapsedTime(
 }
 
 const elapsedsTime: ElapsedTime[] = [
-  createElapsedTime(YEAR_MILISECONDS, 'año'),
-  createElapsedTime(MONTH_MILISECONDS, 'mes', 'es'),
-  createElapsedTime(WEEK_MILISECONDS, 'semana'),
-  createElapsedTime(DAY_MILISECONDS, 'día', 's', 'dias'),
-  createElapsedTime(HOUR_MILISECONDS, 'hora'),
-  createElapsedTime(MINUTE_MILISECONDS, 'minuto'),
-  createElapsedTime(SECOND_MILISECONDS, 'segundo')
+  createElapsedTime(MILISECONDS_YEAR, 'año'),
+  createElapsedTime(MILISECONDS_MONTH, 'mes', 'es'),
+  createElapsedTime(MILISECONDS_WEEK, 'semana'),
+  createElapsedTime(MILISECONDS_DAY, 'día', 's', 'dias'),
+  createElapsedTime(MILISECONDS_HOUR, 'hora'),
+  createElapsedTime(MILISECONDS_MINUTE, 'minuto'),
+  createElapsedTime(MILISECONDS_SECOND, 'segundo')
 ];
 
 export function getFormatForHumans(milliseconds: number): string {
@@ -82,22 +82,22 @@ export function getPendingTime(initial: Date, future = new Date()): PendingTime 
   const difference = future.getTime() - initial.getTime();
 
   return {
-    years: Math.floor(difference / YEAR_MILISECONDS),
-    months: Math.floor(difference / MONTH_MILISECONDS),
-    weeks: Math.floor(difference / WEEK_MILISECONDS),
-    days: Math.floor(difference / DAY_MILISECONDS),
-    hours: Math.floor(difference / HOUR_MILISECONDS),
-    minutes: Math.floor(difference / MINUTE_MILISECONDS),
-    seconds: Math.floor(difference / SECOND_MILISECONDS)
+    years: Math.floor(difference / MILISECONDS_YEAR),
+    months: Math.floor(difference / MILISECONDS_MONTH),
+    weeks: Math.floor(difference / MILISECONDS_WEEK),
+    days: Math.floor(difference / MILISECONDS_DAY),
+    hours: Math.floor(difference / MILISECONDS_HOUR),
+    minutes: Math.floor(difference / MILISECONDS_MINUTE),
+    seconds: Math.floor(difference / MILISECONDS_SECOND)
   };
 }
 
 export function updateDateWithDays(date: Date, days = 1): Date {
-  return updateDateWithTimestamp(date, days * DAY_MILISECONDS);
+  return updateDateWithTimestamp(date, days * MILISECONDS_DAY);
 }
 
 export function updateDateWithMonths(date: Date, months = 1): Date {
-  return updateDateWithTimestamp(date, months * MONTH_MILISECONDS);
+  return updateDateWithTimestamp(date, months * MILISECONDS_MONTH);
 }
 
 function updateDateWithTimestamp(date: Date, timestamp: number): Date {
