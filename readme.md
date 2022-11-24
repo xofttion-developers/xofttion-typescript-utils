@@ -1,3 +1,7 @@
-# Xofttion Utils
+# @xofttion-utils
 
-Angular 13 compatible utility library.
+Utility library compatible with Typescript projects.
+
+<p>
+  <b>Author:</b> Daniel Andrés Castillo Pedroza
+</p>
