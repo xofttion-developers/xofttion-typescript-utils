@@ -1,7 +1,7 @@
 import { getDateFormat, getDateWeight, isLeapYear } from './date';
 import { getFormatForHumans } from './date-elapsed';
 
-export function definePrimiviteFunctionExtensions(): void {
+export function enabledPrimiviteExtensions(): void {
   Object.defineProperty(Array.prototype, 'empty', {
     get: function () {
       return this.length === 0;

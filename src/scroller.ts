@@ -30,7 +30,9 @@ export class ScrollerElement {
   }
 
   public get verticalEnd(): boolean {
-    return this.scrollTop + this.clientHeight >= this.scrollHeight - this._scrollError;
+    return (
+      this.scrollTop + this.clientHeight >= this.scrollHeight - this._scrollError
+    );
   }
 
   public get verticalPercentage(): number {
@@ -44,7 +46,9 @@ export class ScrollerElement {
   }
 
   public get horizontalEnd(): boolean {
-    return this.scrollLeft + this.clientWidth >= this.scrollWidth - this._scrollError;
+    return (
+      this.scrollLeft + this.clientWidth >= this.scrollWidth - this._scrollError
+    );
   }
 
   public get horizontalPercentage(): number {
