@@ -1,32 +1,20 @@
 {
   "name": "@xofttion/utils",
-  "version": "1.0.1",
+  "version": "4.0.0",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "module": "dist/xofttion-utils.esm.js",
   "files": [
     "dist",
     "src"
   ],
-  "engines": {
-    "node": ">=10"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "jest"
+    "test": "jest",
+    "launch": "ts-node index.ts"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "transform": {
-      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!variables/.*)"
-    ]
-  },
-  "module": "dist/xofttion-utils.esm.js",
   "devDependencies": {
     "@types/jest": "^28.1.8",
     "@types/mocha": "^10.0.0",
@@ -38,5 +26,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/xofttion-developers/xofttion-typescript-utils.git"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!variables/.*)"
+    ]
   }
 }
