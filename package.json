@@ -1,14 +1,13 @@
 {
   "name": "@xofttion/utils",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "module": "dist/xofttion-utils.esm.js",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
