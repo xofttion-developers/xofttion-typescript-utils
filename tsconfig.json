@@ -6,7 +6,7 @@
     "importHelpers": true,
     "jsx": "react",
     "lib": ["dom", "es2020"],
-    "module": "commonjs",
+    "module": "es2020",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
@@ -24,7 +24,7 @@
   "include": ["src"],
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "es2020"
     },
     "files": true
   }
