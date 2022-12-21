@@ -1,7 +1,7 @@
 {
   "name": "@xofttion/utils",
-  "type": "module",
-  "version": "4.0.3",
+  "type": "commonjs",
+  "version": "4.1.0",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "dist/index.js",
