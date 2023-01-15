@@ -10,6 +10,18 @@ export abstract class Optional<T> {
 
   public abstract get(): T;
 
+  public present(call: (value: T) => void): void {
+    if (this.isPresent()) {
+      call(this.get());
+    }
+  }
+
+  public empty(call: () => void): void {
+    if (this.isEmpty()) {
+      call();
+    }
+  }
+
   public static build<T>(value?: T | null): Optional<T> {
     return isDefined(value) ? this.of(value as T) : this.empty();
   }
