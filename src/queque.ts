@@ -1,27 +1,23 @@
 import { Optional } from './optional';
 
 class QuequeElement<T> {
-  private _next?: QuequeElement<T>;
+  private nextElement?: QuequeElement<T>;
 
-  constructor(private _value: T) {}
-
-  public get value(): T {
-    return this._value;
-  }
+  constructor(public readonly value: T) {}
 
   public set next(element: Undefined<QuequeElement<T>>) {
-    this._next = element;
+    this.nextElement = element;
   }
 
   public get next(): Undefined<QuequeElement<T>> {
-    return this._next;
+    return this.nextElement;
   }
 }
 
 export class Queque<T> {
-  private _head?: QuequeElement<T>;
+  private head?: QuequeElement<T>;
 
-  private _tail?: QuequeElement<T>;
+  private tail?: QuequeElement<T>;
 
   private _length = 0;
 
@@ -32,22 +28,22 @@ export class Queque<T> {
   public enqueue(value: T): void {
     const newElement = new QuequeElement(value);
 
-    if (!this._head) {
-      this._head = newElement;
-    } else if (this._tail) {
-      this._tail.next = newElement;
+    if (!this.head) {
+      this.head = newElement;
+    } else if (this.tail) {
+      this.tail.next = newElement;
     }
 
-    this._tail = newElement;
+    this.tail = newElement;
 
     this._length++;
   }
 
   public dequeue(): Optional<T> {
-    if (this._head) {
-      const value = this._head.value;
+    if (this.head) {
+      const value = this.head.value;
 
-      this._head = this._head.next;
+      this.head = this.head.next;
 
       this._length--;
 
