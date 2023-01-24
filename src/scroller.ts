@@ -1,5 +1,5 @@
 export class ScrollerElement {
-  constructor(private element: HTMLElement, private _scrollError = 0) {}
+  constructor(private element: HTMLElement, private scrollError = 0) {}
 
   public get scrollWidth(): number {
     return this.element.scrollWidth;
@@ -31,7 +31,7 @@ export class ScrollerElement {
 
   public get verticalEnd(): boolean {
     return (
-      this.scrollTop + this.clientHeight >= this.scrollHeight - this._scrollError
+      this.scrollTop + this.clientHeight >= this.scrollHeight - this.scrollError
     );
   }
 
@@ -47,7 +47,7 @@ export class ScrollerElement {
 
   public get horizontalEnd(): boolean {
     return (
-      this.scrollLeft + this.clientWidth >= this.scrollWidth - this._scrollError
+      this.scrollLeft + this.clientWidth >= this.scrollWidth - this.scrollError
     );
   }
 

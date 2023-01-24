@@ -54,7 +54,7 @@ export class Either<L, R> {
   private constructor(private value: EitherValue<L, R>) {}
 
   public fold<V>(resolver: EitherResolver<L, R, V>): Undefined<V> {
-    return this._unwrap(resolver);
+    return this.unwrap(resolver);
   }
 
   public promise<V>(resolver: EitherResolver<L, R, V>): Promise<Undefined<V>> {
@@ -65,7 +65,7 @@ export class Either<L, R> {
     return Optional.build(this.fold(resolver));
   }
 
-  private _unwrap<V>(resolver: EitherResolver<L, R, V>): Undefined<V> {
+  private unwrap<V>(resolver: EitherResolver<L, R, V>): Undefined<V> {
     if (isRight(this.value) && resolver.right) {
       return resolver.right(unwrapEither(this.value));
     }
