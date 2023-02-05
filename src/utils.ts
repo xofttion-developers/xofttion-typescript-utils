@@ -5,6 +5,15 @@ const FALSY_VALUES = ['false', 'undefined', '0', 0];
 
 type FnEach = <T>(el: T, index: number) => Undefined<boolean>;
 type FnStop = <T>(el: T, index: number) => void;
+type FnPromises = () => Promise<unknown>;
+
+type PromisesConfig = {
+  error: (_: unknown) => void;
+  index: number;
+  promises: FnPromises[];
+  result: unknown[];
+  success: (_: unknown[]) => void;
+};
 
 class ForEachBreakException<T> extends Error {
   constructor(private _element: T, private _index: number) {
@@ -35,20 +44,44 @@ function clone<A>(object: A, caches: unknown[]): A {
     caches.push(object);
   }
 
-  const prototypeObject = Object.getPrototypeOf(object);
-  const constructorObject = prototypeObject.constructor;
+  const objPrototype = Object.getPrototypeOf(object);
+  const objConstructor = objPrototype.constructor;
 
-  if (PRIMITIVES.includes(constructorObject)) {
-    return new constructorObject(object);
+  if (PRIMITIVES.includes(objConstructor)) {
+    return new objConstructor(object);
   }
 
-  const objectClone: A = new constructorObject();
+  const objectClone: A = new objConstructor();
 
   for (const prop in object) {
-    objectClone[prop] = clone(object[prop], caches) as any;
+    objectClone[prop] = clone<any>(object[prop], caches);
   }
 
   return objectClone;
+}
+
+function executePromises(config: PromisesConfig): void {
+  const { error, index, promises, result, success } = config;
+
+  if (index === promises.length) {
+    success(result);
+  } else {
+    new Promise(() => {
+      promises[index]()
+        .then((value) => {
+          executePromises({
+            error,
+            index: index + 1,
+            promises,
+            result: [...result, value],
+            success
+          });
+        })
+        .catch((ex) => {
+          error(ex);
+        });
+    });
+  }
 }
 
 export function isDefined(object: any): boolean {
@@ -117,4 +150,22 @@ export function parse<T>(value: string): T {
   } catch {
     return value as unknown as T;
   }
+}
+
+export function promisesZip(promises: FnPromises[]): Promise<unknown[]> {
+  return promises.length
+    ? new Promise((resolve, reject) => {
+        executePromises({
+          error: (ex) => {
+            reject(ex);
+          },
+          index: 0,
+          result: [],
+          promises,
+          success: (result) => {
+            resolve(result);
+          }
+        });
+      })
+    : Promise.resolve([]);
 }
