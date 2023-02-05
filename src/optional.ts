@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { isDefined } from './utils';
 
+type FoldProps<T, R = unknown> = {
+  empty: () => R;
+  present: (value: T) => R;
+};
+
 export abstract class Optional<T> {
   protected constructor() {}
 
@@ -20,6 +25,10 @@ export abstract class Optional<T> {
     if (this.isEmpty()) {
       call();
     }
+  }
+
+  public fold<R = unknown>({ empty, present }: FoldProps<T, R>): R {
+    return this.isEmpty() ? empty() : present(this.get());
   }
 
   public static build<T>(value?: T | null): Optional<T> {
