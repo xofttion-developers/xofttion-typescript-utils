@@ -6,17 +6,26 @@ type DoubleProps = {
 
 type DoubleValue = string | number | Double | DoubleProps;
 
+type DividerValue = {
+  number1: Double;
+  number2: Double;
+  precision?: number;
+  dp?: any;
+};
+
 const DOUBLE_REGEX = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i;
 const BASE = 1e5;
 const LOG_BASE = 5;
 const EXPONENT_NEGATIVE = -5;
 const EXPONENT_POSITIVE = 15;
+const MAX_DIGITS = 1e9;
 const MAX_SAFE_INTEGER = 9007199254740991;
 const MAX_EXPONENT = Math.floor(MAX_SAFE_INTEGER / LOG_BASE);
 const CHAR_NEGATIVE = 45;
 const CHAR_ZERO = 48;
 const DOUBLE_ZERO_PROPS = { decimals: [0], exp: 0, signed: 0 };
 const PRECISION = 20;
+const ROUNDING = 4;
 const SIGNED_POSITIVE = 1;
 const SIGNED_NEGATIVE = -1;
 
@@ -25,12 +34,16 @@ export class Double {
   public readonly exp;
   public readonly signed;
 
-  constructor(value: DoubleValue) {
-    const { decimals, exp, signed } = createDoubleProps(value);
+  protected constructor(value: DoubleValue) {
+    const { decimals, exp, signed } = constructorDouble(value);
 
     this.decimals = decimals;
     this.exp = exp;
     this.signed = signed;
+  }
+
+  public get value(): number {
+    return +this;
   }
 
   public plus(value: DoubleValue): Double {
@@ -54,23 +67,32 @@ export class Double {
   }
 
   public divide(value: DoubleValue): Double {
-    return divide(this, createDouble(value));
+    return divide({ number1: this, number2: createDouble(value) });
   }
 
-  public abs(): Double {
-    return new Double({
-      decimals: this.decimals,
-      exp: this.exp,
-      signed: SIGNED_POSITIVE
-    });
+  public module(value: DoubleValue): Double {
+    const double = createDouble(value);
+
+    if (!double.signed) {
+      throw Error('[DecimalError] Exponent out of range: NaN');
+    }
+
+    if (!this.signed) {
+      return round(this, PRECISION);
+    }
+
+    const result = divide({
+      number1: this,
+      number2: double,
+      precision: 0,
+      dp: 1
+    }).multiply(double);
+
+    return this.minus(result);
   }
 
-  public negative(): Double {
-    return new Double({
-      decimals: this.decimals,
-      exp: this.exp,
-      signed: -this.signed
-    });
+  public percentage(rate: number): Double {
+    return this.multiply(rate / 100);
   }
 
   public equals(value: DoubleValue): boolean {
@@ -93,12 +115,63 @@ export class Double {
     return true;
   }
 
-  public get value(): number {
-    return +this;
+  public greaterThan(value: DoubleValue): boolean {
+    return compareTo(this, createDouble(value)) > 0;
+  }
+
+  public greaterThanOrEqualTo(value: DoubleValue): boolean {
+    return compareTo(this, createDouble(value)) >= 0;
+  }
+
+  public lessThan(value: DoubleValue): boolean {
+    return compareTo(this, createDouble(value)) < 0;
+  }
+
+  public lessThanOrEqualTo(value: DoubleValue): boolean {
+    return compareTo(this, createDouble(value)) < 1;
+  }
+
+  public abs(): Double {
+    return new Double({
+      decimals: this.decimals,
+      exp: this.exp,
+      signed: SIGNED_POSITIVE
+    });
+  }
+
+  public negative(): Double {
+    return new Double({
+      decimals: this.decimals,
+      exp: this.exp,
+      signed: -this.signed
+    });
+  }
+
+  public isNegative(): boolean {
+    return this.signed < 0;
+  }
+
+  public isPositive(): boolean {
+    return this.signed > 0;
   }
 
   public isZero(): boolean {
     return this.signed === 0;
+  }
+
+  public toFixed(decimals: number, roundMode: number): string {
+    if (!decimals) {
+      return toString(this, false);
+    }
+
+    checkInt32(decimals, 0, MAX_DIGITS);
+
+    !roundMode ? (roundMode = ROUNDING) : checkInt32(roundMode, 0, 8);
+
+    const double = round(this, decimals + getBase10Exp(this) + 1, roundMode);
+    const str = toString(double.abs(), false, decimals + getBase10Exp(double) + 1);
+
+    return this.isNegative() && !this.isZero() ? '-' + str : str;
   }
 
   public clone(): Double {
@@ -113,16 +186,20 @@ export class Double {
     return toString(this, isExponent(getExpBase10(this)));
   }
 
+  public static create(value: DoubleValue): Double {
+    return new Double(value);
+  }
+
   public static zero(): Double {
     return new Double(DOUBLE_ZERO_PROPS);
   }
 }
 
 function createDouble(value: DoubleValue): Double {
-  return value instanceof Double ? value : new Double(value);
+  return value instanceof Double ? value : Double.create(value);
 }
 
-function createDoubleProps(value: DoubleValue): DoubleProps {
+function constructorDouble(value: DoubleValue): DoubleProps {
   if (value instanceof Double) {
     return value.props();
   }
@@ -196,7 +273,7 @@ function parseDouble(signed: number, doubleStr: string): DoubleProps {
     ++i;
   }
 
-  for (length; doubleStr.charCodeAt(length - 1) === CHAR_ZERO; ) {
+  for (length = doubleStr.length; doubleStr.charCodeAt(length - 1) === CHAR_ZERO; ) {
     --length;
   }
 
@@ -227,7 +304,7 @@ function parseDouble(signed: number, doubleStr: string): DoubleProps {
       doubleStr = doubleStr.slice(i);
       i = LOG_BASE - doubleStr.length;
     } else {
-      i -= exp === 0 ? length : length - 1;
+      i -= length;
     }
 
     for (; i--; ) {
@@ -237,7 +314,7 @@ function parseDouble(signed: number, doubleStr: string): DoubleProps {
     decimals.push(+doubleStr);
 
     if (exp > MAX_EXPONENT || exp < -MAX_EXPONENT) {
-      throw Error('Exponent out of range: ' + expStr);
+      throw Error('[DecimalError] Exponent out of range: ' + expStr);
     }
 
     return { decimals, exp, signed };
@@ -317,7 +394,11 @@ function plus(number1: Double, number2: Double): Double {
     decimals1.pop();
   }
 
-  return new Double({ decimals: decimals1, exp: exp2, signed: number1.signed });
+  return Double.create({
+    decimals: decimals1,
+    exp: exp2,
+    signed: number1.signed
+  });
 }
 
 function minus(number1: Double, number2: Double): Double {
@@ -419,11 +500,11 @@ function minus(number1: Double, number2: Double): Double {
     return Double.zero();
   }
 
-  return new Double({ decimals: decimals1, exp: exp2, signed });
+  return Double.create({ decimals: decimals1, exp: exp2, signed });
 }
 
 function multiply(number1: Double, number2: Double): Double {
-  if (number1.isZero() && number2.isZero()) {
+  if (number1.isZero() || number2.isZero()) {
     return Double.zero();
   }
 
@@ -480,15 +561,10 @@ function multiply(number1: Double, number2: Double): Double {
     decimalsTemp.shift();
   }
 
-  return new Double({ decimals: decimalsTemp, exp: exp, signed });
+  return Double.create({ decimals: decimalsTemp, exp: exp, signed });
 }
 
-function divide(
-  number1: Double,
-  number2: Double,
-  precision?: number,
-  dp?: any
-): Double {
+function divide({ number1, number2, dp, precision }: DividerValue): Double {
   if (number2.isZero()) {
     throw Error('[DecimalError] Division by zero');
   }
@@ -496,6 +572,7 @@ function divide(
   if (number1.isZero()) {
     return Double.zero();
   }
+
   const signed =
     number1.signed == number2.signed ? SIGNED_POSITIVE : SIGNED_NEGATIVE;
 
@@ -651,7 +728,7 @@ function divide(
     decimals.shift();
   }
 
-  const double = new Double({ decimals, exp, signed });
+  const double = Double.create({ decimals, exp, signed });
 
   const precisionDef = dp ? precision + getExpBase10(double) + 1 : precision;
 
@@ -674,6 +751,29 @@ function multiplyInteger(decimals: number[], size: number): number[] {
   }
 
   return decimals;
+}
+
+function compareTo(number1: Double, number2: Double): number {
+  if (number1.signed !== number2.signed) {
+    return number1.signed || -number2.signed;
+  }
+
+  if (number1.exp !== number2.exp) {
+    return number1.exp > number2.exp !== number1.signed < 0 ? 1 : -1;
+  }
+
+  const decimals1 = number1.decimals;
+  const decimals2 = number2.decimals;
+  const length1 = decimals1.length;
+  const length2 = decimals2.length;
+
+  for (let i = 0, j = length1 < length2 ? length1 : length2; i < j; ++i) {
+    if (decimals1[i] !== decimals2[i]) {
+      return decimals1[i] > decimals2[i] !== number1.signed < 0 ? 1 : -1;
+    }
+  }
+
+  return length1 === length2 ? 0 : length1 > length2 !== number1.signed < 0 ? 1 : -1;
 }
 
 function compare(
@@ -781,7 +881,7 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
       const value = Math.pow(10, (LOG_BASE - (precisionDef % LOG_BASE)) % LOG_BASE);
       const exp = Math.floor(-precisionDef / LOG_BASE) || 0;
 
-      return new Double({ decimals: [value], exp, signed: double.signed });
+      return Double.create({ decimals: [value], exp, signed: double.signed });
     } else {
       return Double.zero();
     }
@@ -837,7 +937,7 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
     throw Error('[DecimalError] Exponent out of range: ' + getExpBase10(double));
   }
 
-  return new Double({ decimals, exp, signed });
+  return Double.create({ decimals, exp, signed });
 }
 
 function toString(double: Double, isExponent: boolean, sd?: number): string {
@@ -898,6 +998,17 @@ function getExpBase10(double: Double): number {
   return exp;
 }
 
+function getBase10Exp(number: Double): number {
+  let exp = number.exp * LOG_BASE;
+  let first = number.decimals[0];
+
+  for (; first >= 10; first /= 10) {
+    exp++;
+  }
+
+  return exp;
+}
+
 function digitsToString(decimals: number[]): string {
   let indexLastWord = decimals.length - 1;
   let str = '';
@@ -944,4 +1055,10 @@ function padZeroString(size: number): string {
   }
 
   return zeroString;
+}
+
+function checkInt32(i: number, min: number, max: number): void {
+  if (i !== ~~i || i < min || i > max) {
+    throw Error('[DecimalError] Invalid argument: ' + i);
+  }
 }
