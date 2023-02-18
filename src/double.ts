@@ -10,7 +10,7 @@ type DividerValue = {
   number1: Double;
   number2: Double;
   precision?: number;
-  dp?: any;
+  places?: boolean;
 };
 
 const DOUBLE_REGEX = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i;
@@ -26,6 +26,7 @@ const CHAR_ZERO = 48;
 const DOUBLE_ZERO_PROPS = { decimals: [0], exp: 0, signed: 0 };
 const PRECISION = 20;
 const ROUNDING = 4;
+const DEFAULT_FIXED = 2;
 const SIGNED_POSITIVE = 1;
 const SIGNED_NEGATIVE = -1;
 
@@ -49,6 +50,10 @@ export class Double {
   public plus(value: DoubleValue): Double {
     const double = createDouble(value);
 
+    if (double.isZero()) {
+      return this.clone();
+    }
+
     return this.signed == double.signed
       ? plus(this, double)
       : minus(this, double.negative());
@@ -56,6 +61,10 @@ export class Double {
 
   public minus(value: DoubleValue): Double {
     const double = createDouble(value);
+
+    if (double.isZero()) {
+      return this.clone();
+    }
 
     return this.signed == double.signed
       ? minus(this, double)
@@ -84,8 +93,8 @@ export class Double {
     const result = divide({
       number1: this,
       number2: double,
-      precision: 0,
-      dp: 1
+      places: true,
+      precision: 0
     }).multiply(double);
 
     return this.minus(result);
@@ -159,19 +168,18 @@ export class Double {
     return this.signed === 0;
   }
 
-  public toFixed(decimals: number, roundMode: number): string {
+  public toFixed(decimals = DEFAULT_FIXED, roundMode = ROUNDING): string {
     if (!decimals) {
       return toString(this, false);
     }
 
     checkInt32(decimals, 0, MAX_DIGITS);
-
-    !roundMode ? (roundMode = ROUNDING) : checkInt32(roundMode, 0, 8);
+    checkInt32(roundMode, 0, 8);
 
     const double = round(this, decimals + getBase10Exp(this) + 1, roundMode);
     const str = toString(double.abs(), false, decimals + getBase10Exp(double) + 1);
 
-    return this.isNegative() && !this.isZero() ? '-' + str : str;
+    return this.isNegative() && !this.isZero() ? `-${str}` : str;
   }
 
   public clone(): Double {
@@ -466,7 +474,10 @@ function minus(number1: Double, number2: Double): Double {
     decimalsTemp = decimals1;
     decimals1 = decimals2;
     decimals2 = decimalsTemp;
-    signed = -signed;
+
+    if (signed != 0) {
+      signed = -signed;
+    }
   }
 
   length = decimals1.length;
@@ -564,7 +575,7 @@ function multiply(number1: Double, number2: Double): Double {
   return Double.create({ decimals: decimalsTemp, exp: exp, signed });
 }
 
-function divide({ number1, number2, dp, precision }: DividerValue): Double {
+function divide({ number1, number2, places, precision }: DividerValue): Double {
   if (number2.isZero()) {
     throw Error('[DecimalError] Division by zero');
   }
@@ -595,7 +606,7 @@ function divide({ number1, number2, dp, precision }: DividerValue): Double {
 
   if (!precision) {
     precTemp = precision = PRECISION;
-  } else if (dp) {
+  } else if (places) {
     precTemp = precision + (getExpBase10(number1) - getExpBase10(number2)) + 1;
   } else {
     precTemp = precision;
@@ -730,7 +741,7 @@ function divide({ number1, number2, dp, precision }: DividerValue): Double {
 
   const double = Double.create({ decimals, exp, signed });
 
-  const precisionDef = dp ? precision + getExpBase10(double) + 1 : precision;
+  const precisionDef = places ? precision + getExpBase10(double) + 1 : precision;
 
   return round(double, precisionDef);
 }
