@@ -11,6 +11,7 @@
     "dist"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc -p tsconfig.json",
     "test": "jest",
     "launch": "ts-node index.ts"
