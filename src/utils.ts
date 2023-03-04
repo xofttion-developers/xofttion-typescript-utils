@@ -3,29 +3,21 @@ const prototypeToString = Object.prototype.toString;
 
 const FALSY_VALUES = ['false', 'undefined', '0', 0];
 
-type FnEach = <T>(el: T, index: number) => Undefined<boolean>;
-type FnStop = <T>(el: T, index: number) => void;
-type FnPromises = () => Promise<unknown>;
+type EachFn = <T>(el: T, index: number) => Undefined<boolean>;
+type StopFn = <T>(el: T, index: number) => void;
+type PromisesFn<T extends any> = () => Promise<T>;
 
-type PromisesConfig = {
-  error: (_: unknown) => void;
+type PromisesConfig<T extends any> = {
+  error: (_: any) => void;
   index: number;
-  promises: FnPromises[];
-  result: unknown[];
-  success: (_: unknown[]) => void;
+  promises: PromisesFn<T>[];
+  result: T[];
+  success: (_: T[]) => void;
 };
 
 class ForEachBreakException<T> extends Error {
-  constructor(private _element: T, private _index: number) {
+  constructor(public readonly element: T, public readonly index: number) {
     super('');
-  }
-
-  public get element(): T {
-    return this._element;
-  }
-
-  public get index(): number {
-    return this._index;
   }
 }
 
@@ -35,10 +27,10 @@ function clone<A>(object: A, caches: unknown[]): A {
   }
 
   if (prototypeToString.call(object) === '[object Object]') {
-    const [objectCache] = caches.filter((objectCache) => objectCache === object);
+    const [objCache] = caches.filter((objCache) => objCache === object);
 
-    if (objectCache) {
-      return objectCache as A;
+    if (objCache) {
+      return objCache as A;
     }
 
     caches.push(object);
@@ -51,16 +43,16 @@ function clone<A>(object: A, caches: unknown[]): A {
     return new objConstructor(object);
   }
 
-  const objectClone: A = new objConstructor();
+  const objClone: A = new objConstructor();
 
   for (const prop in object) {
-    objectClone[prop] = clone<any>(object[prop], caches);
+    objClone[prop] = clone<any>(object[prop], caches);
   }
 
-  return objectClone;
+  return objClone;
 }
 
-function executePromises(config: PromisesConfig): void {
+function executePromises<T extends any>(config: PromisesConfig<T>): void {
   const { error, index, promises, result, success } = config;
 
   if (index === promises.length) {
@@ -108,20 +100,20 @@ export function changeElement<T>(array: T[], old: T, element: T): T[] {
   return array.map((value) => (value === old ? element : value));
 }
 
-export function each<T>(array: T[], callEach: FnEach, callStop?: FnStop): boolean {
+export function each<T>(array: T[], callEach: EachFn, callStop?: StopFn): boolean {
   try {
     array.forEach((element, index) => {
-      const shouldStop = callEach(element, index);
+      const stop = callEach(element, index);
 
-      if (isDefined(shouldStop) && !shouldStop) {
+      if (!!stop) {
         throw new ForEachBreakException(element, index);
       }
     });
 
     return true;
   } catch (error) {
-    if (callStop && error instanceof ForEachBreakException) {
-      callStop(error.element as T, error.index);
+    if (callStop && error instanceof ForEachBreakException<T>) {
+      callStop(error.element, error.index);
     }
 
     return false;
@@ -152,7 +144,7 @@ export function parse<T>(value: string): T {
   }
 }
 
-export function promisesZip(promises: FnPromises[]): Promise<unknown[]> {
+export function promisesZip<T extends any>(promises: PromisesFn<T>[]): Promise<T[]> {
   return promises.length
     ? new Promise((resolve, reject) => {
         executePromises({
