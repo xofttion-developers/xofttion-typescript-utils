@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { isDefined } from './utils';
 
 type FoldProps<T, R = unknown> = {
@@ -7,7 +6,7 @@ type FoldProps<T, R = unknown> = {
 };
 
 export abstract class Optional<T> {
-  protected constructor() {}
+  protected constructor(public readonly value?: T) {}
 
   public abstract isPresent(): boolean;
 
@@ -49,8 +48,8 @@ export abstract class Optional<T> {
 }
 
 class PresentOptional<T> extends Optional<T> {
-  constructor(private value: T) {
-    super();
+  constructor(private valuePresent: T) {
+    super(valuePresent);
   }
 
   public isPresent(): boolean {
@@ -62,7 +61,7 @@ class PresentOptional<T> extends Optional<T> {
   }
 
   public get(): T {
-    return this.value;
+    return this.valuePresent;
   }
 }
 
