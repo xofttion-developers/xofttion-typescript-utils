@@ -3,8 +3,6 @@ const prototypeToString = Object.prototype.toString;
 
 const FALSY_VALUES = ['false', 'undefined', '0', 0];
 
-type EachFn = <T>(el: T, index: number) => Undefined<boolean>;
-type StopFn = <T>(el: T, index: number) => void;
 type PromisesFn<T extends any> = () => Promise<T>;
 
 type PromisesConfig<T extends any> = {
@@ -14,12 +12,6 @@ type PromisesConfig<T extends any> = {
   result: T[];
   success: (_: T[]) => void;
 };
-
-class ForEachBreakException<T> extends Error {
-  constructor(public readonly element: T, public readonly index: number) {
-    super('');
-  }
-}
 
 function clone<A>(object: A, caches: unknown[]): A {
   if (typeof object !== 'object') {
@@ -86,38 +78,6 @@ export function isUndefined(object: any): boolean {
 
 export function parseBoolean(value: any): boolean {
   return !(isUndefined(value) || value === false || FALSY_VALUES.includes(value));
-}
-
-export function pushElement<T>(array: T[], element: T): T[] {
-  return [...array, element];
-}
-
-export function removeElement<T>(array: T[], element: T): T[] {
-  return array.filter((value) => value !== element);
-}
-
-export function changeElement<T>(array: T[], old: T, element: T): T[] {
-  return array.map((value) => (value === old ? element : value));
-}
-
-export function each<T>(array: T[], callEach: EachFn, callStop?: StopFn): boolean {
-  try {
-    array.forEach((element, index) => {
-      const stop = callEach(element, index);
-
-      if (!!stop) {
-        throw new ForEachBreakException(element, index);
-      }
-    });
-
-    return true;
-  } catch (error) {
-    if (callStop && error instanceof ForEachBreakException<T>) {
-      callStop(error.element, error.index);
-    }
-
-    return false;
-  }
 }
 
 export function deepClone<A>(object: A): A {

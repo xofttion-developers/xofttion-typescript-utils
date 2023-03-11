@@ -100,6 +100,6 @@ export function updateDateWithMonths(date: Date, months = 1): Date {
   return updateDateWithTimestamp(date, months * MILISECONDS_MONTH);
 }
 
-function updateDateWithTimestamp(date: Date, timestamp: number): Date {
+export function updateDateWithTimestamp(date: Date, timestamp: number): Date {
   return new Date(date.getTime() + timestamp);
 }

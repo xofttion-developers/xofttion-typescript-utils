@@ -1,3 +1,12 @@
+import { firstElement, lastElement } from './array';
+
+export function firstChar(value: string): string {
+  return value.length === 0 ? '' : value.charAt(0);
+}
+
+export function lastChar(value: string): string {
+  return value.length ? '' : value.charAt(value.length - 1);
+}
 export function hasPattern(word: string, pattern: string, force = false): boolean {
   let filter = pattern.toLowerCase();
   let test = word.toLowerCase();
@@ -34,8 +43,8 @@ export function getInitials(word: string, size = 2): string {
     return word.slice(0, size).toUpperCase();
   }
 
-  const firstValue = valueSplit.firstElement() as string;
-  const lastValue = valueSplit.lastElement() as string;
+  const firstValue = firstElement(valueSplit) as string;
+  const lastValue = lastElement(valueSplit) as string;
 
-  return `${firstValue.firstChar()}${lastValue.firstChar()}`.toUpperCase();
+  return `${firstChar(firstValue)}${firstChar(lastValue)}`.toUpperCase();
 }

@@ -1,3 +1,5 @@
+import { getFormatForHumans } from './date-elapsed';
+
 export const MONTHS_NAME = [
   'Enero',
   'Febrero',
@@ -30,7 +32,15 @@ export const MONTHS_NAME_MIN = [
 
 export const MONTHS_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-export const DAYS_NAME = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+export const DAYS_NAME = [
+  'Domingo',
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado'
+];
 
 export const DAYS_NAME_MIN = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 
@@ -78,6 +88,55 @@ const DATE_FORMATTERS: DateFormat = {
     return date.getHours() > 11 ? 'PM' : 'AM';
   }
 };
+
+export function equalsDate(date: Date, compareDate = new Date()): boolean {
+  return date.getTime() === compareDate.getTime();
+}
+
+export function equalsDateWeight(date: Date, compareDate = new Date()): boolean {
+  return getDateWeight(date) === getDateWeight(compareDate);
+}
+
+export function isBeforeDate(date: Date, compareDate = new Date()): boolean {
+  return date.getTime() > compareDate.getTime();
+}
+
+export function isBeforeOrEqualsDate(date: Date, compareDate = new Date()): boolean {
+  return date.getTime() >= compareDate.getTime();
+}
+
+export function isAfterDate(date: Date, compareDate = new Date()): boolean {
+  return date.getTime() < compareDate.getTime();
+}
+
+export function isAfterOrEqualsDate(date: Date, compareDate = new Date()): boolean {
+  return date.getTime() <= compareDate.getTime();
+}
+
+export function getDifference(date: Date, compareDate = new Date()): number {
+  return date.getTime() - compareDate.getTime();
+}
+
+export function getDifferenceForHumans(
+  date: Date,
+  compareDate = new Date()
+): string {
+  return getFormatForHumans(getDifference(date, compareDate));
+}
+
+export function normalizeMinTime(date: Date): void {
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+}
+
+export function normalizeTimeMax(date: Date): void {
+  date.setHours(23);
+  date.setMinutes(59);
+  date.setSeconds(59);
+  date.setMilliseconds(0);
+}
 
 export function getDateWeight(date: Date): number {
   return date.getFullYear() * 365 + (date.getMonth() + 1) * 30 + date.getDate();
