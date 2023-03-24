@@ -20,20 +20,18 @@ export function hasPattern(word: string, pattern: string, force = false): boolea
 }
 
 export function normalize(word: string): string {
-  let result = word;
-
-  result = result.replace('á', 'a');
-  result = result.replace('Á', 'A');
-  result = result.replace('é', 'e');
-  result = result.replace('É', 'E');
-  result = result.replace('í', 'i');
-  result = result.replace('Í', 'I');
-  result = result.replace('ó', 'o');
-  result = result.replace('Ó', 'O');
-  result = result.replace('ú', 'u');
-  result = result.replace('Ú', 'U');
-
-  return result;
+  return word
+    .slice()
+    .replace('á', 'a')
+    .replace('Á', 'A')
+    .replace('é', 'e')
+    .replace('É', 'E')
+    .replace('í', 'i')
+    .replace('Í', 'I')
+    .replace('ó', 'o')
+    .replace('Ó', 'O')
+    .replace('ú', 'u')
+    .replace('Ú', 'U');
 }
 
 export function getInitials(word: string, size = 2): string {

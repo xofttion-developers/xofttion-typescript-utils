@@ -19,10 +19,10 @@ export class Queque<T> {
 
   private tail?: QuequeElement<T>;
 
-  private _length = 0;
+  private lengthValue = 0;
 
   public get length(): number {
-    return this._length;
+    return this.lengthValue;
   }
 
   public enqueue(value: T): void {
@@ -36,7 +36,7 @@ export class Queque<T> {
 
     this.tail = newElement;
 
-    this._length++;
+    this.lengthValue++;
   }
 
   public dequeue(): Optional<T> {
@@ -45,7 +45,7 @@ export class Queque<T> {
 
       this.head = this.head.next;
 
-      this._length--;
+      this.lengthValue--;
 
       return Optional.of(value);
     }

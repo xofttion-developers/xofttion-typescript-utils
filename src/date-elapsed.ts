@@ -1,10 +1,12 @@
-export const MILISECONDS_YEAR = 31536000000;
-export const MILISECONDS_MONTH = 2592000000;
-export const MILISECONDS_WEEK = 604800000;
-export const MILISECONDS_DAY = 86400000;
-export const MILISECONDS_HOUR = 3600000;
-export const MILISECONDS_MINUTE = 60000;
-export const MILISECONDS_SECOND = 1000;
+export enum Milliseconds {
+  Year = 31536000000,
+  Month = 2592000000,
+  Week = 604800000,
+  Day = 86400000,
+  Hour = 3600000,
+  Minute = 60000,
+  Second = 1000
+}
 
 interface ElapsedTime {
   value: number;
@@ -24,7 +26,7 @@ interface PendingTime {
 }
 
 function createElapsedTime(
-  value: number,
+  value: Milliseconds,
   single: string,
   charPlural = 's',
   plural?: string
@@ -41,14 +43,14 @@ function createElapsedTime(
   };
 }
 
-const elapsedsTime: ElapsedTime[] = [
-  createElapsedTime(MILISECONDS_YEAR, 'año'),
-  createElapsedTime(MILISECONDS_MONTH, 'mes', 'es'),
-  createElapsedTime(MILISECONDS_WEEK, 'semana'),
-  createElapsedTime(MILISECONDS_DAY, 'día', 's', 'dias'),
-  createElapsedTime(MILISECONDS_HOUR, 'hora'),
-  createElapsedTime(MILISECONDS_MINUTE, 'minuto'),
-  createElapsedTime(MILISECONDS_SECOND, 'segundo')
+const elapsedTimes: ElapsedTime[] = [
+  createElapsedTime(Milliseconds.Year, 'año'),
+  createElapsedTime(Milliseconds.Month, 'mes', 'es'),
+  createElapsedTime(Milliseconds.Week, 'semana'),
+  createElapsedTime(Milliseconds.Day, 'día', 's', 'dias'),
+  createElapsedTime(Milliseconds.Hour, 'hora'),
+  createElapsedTime(Milliseconds.Minute, 'minuto'),
+  createElapsedTime(Milliseconds.Second, 'segundo')
 ];
 
 export function getFormatForHumans(milliseconds: number): string {
@@ -62,8 +64,8 @@ export function getFormatForHumans(milliseconds: number): string {
   let description = '';
   let index = 0;
 
-  while (description === '' && index < elapsedsTime.length) {
-    const elapsed = elapsedsTime[index];
+  while (description === '' && index < elapsedTimes.length) {
+    const elapsed = elapsedTimes[index];
     const result = Math.floor(value / elapsed.value);
 
     if (result >= 1) {
@@ -82,22 +84,22 @@ export function getPendingTime(initial: Date, future = new Date()): PendingTime 
   const difference = future.getTime() - initial.getTime();
 
   return {
-    years: Math.floor(difference / MILISECONDS_YEAR),
-    months: Math.floor(difference / MILISECONDS_MONTH),
-    weeks: Math.floor(difference / MILISECONDS_WEEK),
-    days: Math.floor(difference / MILISECONDS_DAY),
-    hours: Math.floor(difference / MILISECONDS_HOUR),
-    minutes: Math.floor(difference / MILISECONDS_MINUTE),
-    seconds: Math.floor(difference / MILISECONDS_SECOND)
+    years: Math.floor(difference / Milliseconds.Year),
+    months: Math.floor(difference / Milliseconds.Month),
+    weeks: Math.floor(difference / Milliseconds.Week),
+    days: Math.floor(difference / Milliseconds.Day),
+    hours: Math.floor(difference / Milliseconds.Hour),
+    minutes: Math.floor(difference / Milliseconds.Minute),
+    seconds: Math.floor(difference / Milliseconds.Second)
   };
 }
 
 export function updateDateWithDays(date: Date, days = 1): Date {
-  return updateDateWithTimestamp(date, days * MILISECONDS_DAY);
+  return updateDateWithTimestamp(date, days * Milliseconds.Day);
 }
 
 export function updateDateWithMonths(date: Date, months = 1): Date {
-  return updateDateWithTimestamp(date, months * MILISECONDS_MONTH);
+  return updateDateWithTimestamp(date, months * Milliseconds.Month);
 }
 
 export function updateDateWithTimestamp(date: Date, timestamp: number): Date {
