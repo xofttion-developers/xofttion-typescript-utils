@@ -36,7 +36,7 @@ export class Double {
   public readonly signed;
 
   protected constructor(value: DoubleValue) {
-    const { decimals, exp, signed } = constructorDouble(value);
+    const { decimals, exp, signed } = createDoublePropsFromValue(value);
 
     this.decimals = decimals;
     this.exp = exp;
@@ -207,7 +207,7 @@ function createDouble(value: DoubleValue): Double {
   return value instanceof Double ? value : Double.create(value);
 }
 
-function constructorDouble(value: DoubleValue): DoubleProps {
+function createDoublePropsFromValue(value: DoubleValue): DoubleProps {
   if (value instanceof Double) {
     return value.props();
   }
