@@ -47,6 +47,10 @@ export class Double {
     return +this;
   }
 
+  public get fixed(): number {
+    return +this.toFixed();
+  }
+
   public plus(value: DoubleValue): Double {
     const double = createDouble(value);
 
@@ -169,10 +173,6 @@ export class Double {
   }
 
   public toFixed(decimals = DEFAULT_FIXED, roundMode = ROUNDING): string {
-    if (!decimals) {
-      return toString(this, false);
-    }
-
     checkInt32(decimals, 0, MAX_DIGITS);
     checkInt32(roundMode, 0, 8);
 
