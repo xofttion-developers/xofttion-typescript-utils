@@ -117,25 +117,30 @@ export function getDifference(date: Date, compareDate = new Date()): number {
   return date.getTime() - compareDate.getTime();
 }
 
-export function getDifferenceForHumans(
-  date: Date,
-  compareDate = new Date()
-): string {
-  return getFormatForHumans(getDifference(date, compareDate));
+export function getDifferenceForHumans(date: Date, compare = new Date()): string {
+  return getFormatForHumans(getDifference(date, compare));
 }
 
-export function normalizeMinTime(date: Date): void {
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
+export function normalizeMinTime(date: Date): Date {
+  const newDate = new Date(date.getTime());
+
+  newDate.setHours(0);
+  newDate.setMinutes(0);
+  newDate.setSeconds(0);
+  newDate.setMilliseconds(0);
+
+  return newDate;
 }
 
-export function normalizeTimeMax(date: Date): void {
-  date.setHours(23);
-  date.setMinutes(59);
-  date.setSeconds(59);
-  date.setMilliseconds(0);
+export function normalizeTimeMax(date: Date): Date {
+  const newDate = new Date(date.getTime());
+
+  newDate.setHours(23);
+  newDate.setMinutes(59);
+  newDate.setSeconds(59);
+  newDate.setMilliseconds(0);
+
+  return newDate;
 }
 
 export function getDateWeight(date: Date): number {
