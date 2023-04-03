@@ -1,7 +1,7 @@
-const PRIMITIVES = [Date, RegExp, Function, String, Boolean, Number];
+const primitivesClass = [Date, RegExp, Function, String, Boolean, Number];
 const prototypeToString = Object.prototype.toString;
 
-const FALSY_VALUES = ['false', 'undefined', '0', 0];
+const falsyValue = ['false', 'undefined', '0', 0];
 
 type PromisesFn<T extends any> = () => Promise<T>;
 
@@ -19,29 +19,29 @@ function clone<A>(object: A, caches: unknown[]): A {
   }
 
   if (prototypeToString.call(object) === '[object Object]') {
-    const [objCache] = caches.filter((objCache) => objCache === object);
+    const [cacheObject] = caches.filter((cacheObject) => cacheObject === object);
 
-    if (objCache) {
-      return objCache as A;
+    if (cacheObject) {
+      return cacheObject as A;
     }
 
     caches.push(object);
   }
 
-  const objPrototype = Object.getPrototypeOf(object);
-  const objConstructor = objPrototype.constructor;
+  const prototypeObject = Object.getPrototypeOf(object);
+  const ConstructorObject = prototypeObject.constructor;
 
-  if (PRIMITIVES.includes(objConstructor)) {
-    return new objConstructor(object);
+  if (primitivesClass.includes(ConstructorObject)) {
+    return new ConstructorObject(object);
   }
 
-  const objClone: A = new objConstructor();
+  const cloneObject: A = new ConstructorObject();
 
   for (const prop in object) {
-    objClone[prop] = clone<any>(object[prop], caches);
+    cloneObject[prop] = clone<any>(object[prop], caches);
   }
 
-  return objClone;
+  return cloneObject;
 }
 
 function executePromises<T extends any>(config: PromisesConfig<T>): void {
@@ -77,7 +77,7 @@ export function isUndefined(object: any): boolean {
 }
 
 export function parseBoolean(value: any): boolean {
-  return !(isUndefined(value) || value === false || FALSY_VALUES.includes(value));
+  return !(isUndefined(value) || value === false || falsyValue.includes(value));
 }
 
 export function deepClone<A>(object: A): A {
@@ -102,6 +102,10 @@ export function parse<T>(value: string): T {
   } catch {
     return value as unknown as T;
   }
+}
+
+export function promiseFrom<M>(value: M | Promise<M>): Promise<M> {
+  return value instanceof Promise ? value : Promise.resolve(value);
 }
 
 export function promisesZip<T extends any>(promises: PromisesFn<T>[]): Promise<T[]> {
