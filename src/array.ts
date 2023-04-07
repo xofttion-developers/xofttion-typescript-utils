@@ -1,9 +1,9 @@
-type EachFn = <T>(el: T, index: number) => Undefined<boolean>;
-type StopFn = <T>(el: T, index: number) => void;
+type CallEach = <T>(el: T, index: number) => Undefined<boolean>;
+type CallStop = <T>(el: T, index: number) => void;
 
 class ForEachBreakException<T> extends Error {
   constructor(public readonly element: T, public readonly index: number) {
-    super('');
+    super('ForEach Exception');
   }
 }
 
@@ -33,7 +33,7 @@ export function removeElement<T>(array: T[], value: number | T): T[] {
   );
 }
 
-export function eachArray<T>(array: T[], each: EachFn, stop?: StopFn): boolean {
+export function arrayEach<T>(array: T[], each: CallEach, stop?: CallStop): boolean {
   try {
     array.forEach((element, index) => {
       const stop = each(element, index);

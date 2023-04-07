@@ -9,5 +9,6 @@ test
 .gitignore
 .npmrc
 .prettierrc
-.prettierrcignore
+.prettierignore
 package-lock.json
+tsconfig.json
