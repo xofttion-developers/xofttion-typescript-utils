@@ -18,9 +18,9 @@
     "sourceMap": true,
     "strict": true,
     "target": "ES2020",
-    "typeRoots": ["node_modules/@types/**/*.d.ts", "src/**/*.d.ts"]
+    "typeRoots": ["node_modules/@types/**/*.d.ts"]
   },
-  "files": ["src/@types/index.d.ts"],
+  "files": ["node_modules/@xofttion/types/index.d.ts"],
   "include": ["src"],
   "ts-node": {
     "compilerOptions": {
