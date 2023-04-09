@@ -4,17 +4,16 @@
   "version": "4.9.8",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/xofttion-utils.esm.js",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "module": "xofttion-utils.esm.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "publish": "npm run build && cd artifact && npm publish",
     "build": "tsc -p tsconfig.json",
     "test": "jest",
-    "main": "ts-node index.ts"
+    "launch": "ts-node index.ts"
   },
   "devDependencies": {
     "@types/jest": "^28.1.8",
