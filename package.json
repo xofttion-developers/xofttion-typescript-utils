@@ -7,9 +7,6 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "module": "dist/xofttion-utils.esm.js",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "publish": "npm run build && cd artifact && npm publish",
     "build": "tsc -p tsconfig.json",

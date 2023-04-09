@@ -7,9 +7,6 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "module": "xofttion-utils.esm.js",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "jest",
