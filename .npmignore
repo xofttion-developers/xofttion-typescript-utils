@@ -8,7 +8,7 @@ test
 .eslintrc.json
 .gitignore
 .npmrc
-.prettierrc
 .prettierignore
+.prettierrc
 package-lock.json
 tsconfig.json
