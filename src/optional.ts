@@ -30,7 +30,7 @@ export abstract class Optional<T> {
     return this.isEmpty() ? empty() : present(this.get());
   }
 
-  public static build<T>(value?: T | null): Optional<T> {
+  public static build<T>(value?: Nulleable<T>): Optional<T> {
     return isDefined(value) ? this.of(value as T) : this.empty();
   }
 

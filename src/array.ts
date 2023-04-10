@@ -11,11 +11,11 @@ export function inArray<T>(array: T[], element: T): boolean {
   return array.indexOf(element) !== -1;
 }
 
-export function firstElement<T>(array: T[]): T | null {
+export function firstElement<T>(array: T[]): Nulleable<T> {
   return array.length === 0 ? null : array[0];
 }
 
-export function lastElement<T>(array: T[]): T | null {
+export function lastElement<T>(array: T[]): Nulleable<T> {
   return array.length === 0 ? null : array[array.length - 1];
 }
 
