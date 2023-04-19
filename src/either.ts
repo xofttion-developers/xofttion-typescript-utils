@@ -53,8 +53,8 @@ const createRight = <R>(value: R): Right<R> => ({ right: value });
 export class Either<L, R> {
   private constructor(private value: EitherValue<L, R>) {}
 
-  public fold<V>(resolver: EitherResolver<L, R, V>): Undefined<V> {
-    return this.unwrap(resolver);
+  public fold<V>(resolver: EitherResolver<L, R, V>): V {
+    return this.unwrap(resolver) as V;
   }
 
   public promise<V>(resolver: EitherResolver<L, R, V>): Promise<Undefined<V>> {

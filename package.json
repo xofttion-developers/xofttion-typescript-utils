@@ -1,15 +1,12 @@
 {
   "name": "@xofttion/utils",
   "type": "commonjs",
-  "version": "4.9.8",
+  "version": "4.9.10",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "module": "dist/xofttion-utils.esm.js",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "publish": "npm run build && cd artifact && npm publish",
     "build": "tsc -p tsconfig.json",
@@ -19,7 +16,7 @@
   "devDependencies": {
     "@types/jest": "^28.1.8",
     "@types/mocha": "^10.0.0",
-    "@xofttion/types": "^4.9.1",
+    "@xofttion/types": "^4.9.2",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.7",
     "tslib": "^2.4.0",
