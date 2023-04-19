@@ -52,3 +52,15 @@ export function arrayEach<T>(array: T[], each: CallEach, stop?: CallStop): boole
     return false;
   }
 }
+
+export function reduceDistinct<T, V>(array: T[], reducer: (value: T) => V): V[] {
+  return array.reduce((result, element) => {
+    const value = reducer(element);
+
+    if (!result.includes(value)) {
+      result.push(value);
+    }
+
+    return result;
+  }, [] as V[]);
+}
