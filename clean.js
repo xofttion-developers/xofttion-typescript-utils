@@ -1,18 +1,29 @@
-const path = require('path');
-const fs = require('fs');
-
-const directoryPath = path.join(__dirname, 'artifact');
-
+const folderPath = path.join(__dirname, 'artifact');
 const extensions = ['.ts', '.js', '.map'];
 
-fs.readdir(directoryPath, (err, files) => {
-  if (err) {
-    return console.log('Unable to scan directory: ' + err);
-  }
+const fs = require('fs');
+const path = require('path');
+const rimraf = require('rimraf');
+
+function removeFiles(folderPath) {
+  const files = fs.readdirSync(folderPath);
 
   files
-    .filter((file) => extensions.includes(path.extname(file).toLowerCase()))
+    .filter((file) => {
+      const filePath = `${folderPath}/${file}`;
+
+      if (fs.lstatSync(filePath).isDirectory()) {
+        removeFiles(filePath);
+        rimraf.sync(filePath);
+
+        return false;
+      }
+
+      return extensions.includes(path.extname(file).toLowerCase());
+    })
     .forEach((file) => {
-      fs.unlinkSync(`${directoryPath}/${file}`);
+      fs.unlinkSync(`${folderPath}/${file}`);
     });
-});
+}
+
+removeFiles(folderPath);
