@@ -1,9 +1,8 @@
 import { isDefined } from './utils';
 
-type FoldProps<T, R = unknown> = {
-  empty: () => R;
-  present: (value: T) => R;
-};
+type EmptyFn<V> = () => V;
+
+type PresentFn<P, V> = (_: P) => V;
 
 export abstract class Optional<T> {
   protected constructor(public readonly value?: T) {}
@@ -26,8 +25,8 @@ export abstract class Optional<T> {
     }
   }
 
-  public fold<R = unknown>({ empty, present }: FoldProps<T, R>): R {
-    return this.isEmpty() ? empty() : present(this.get());
+  public when<V>(present: PresentFn<T, V>, empty: EmptyFn<V>): Undefined<V> {
+    return this.isPresent() ? present(this.get()) : empty();
   }
 
   public static build<T>(value?: Nulleable<T>): Optional<T> {
