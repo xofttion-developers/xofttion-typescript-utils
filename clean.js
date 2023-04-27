@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const rimraf = require('rimraf');
 
 const folderPath = path.join(__dirname, 'artifact');
 const extensions = ['.ts', '.js', '.map'];
@@ -14,7 +13,7 @@ function removeFiles(folderPath) {
 
       if (fs.lstatSync(filePath).isDirectory()) {
         removeFiles(filePath);
-        rimraf.sync(filePath);
+        fs.rmdirSync(filePath);
 
         return false;
       }
