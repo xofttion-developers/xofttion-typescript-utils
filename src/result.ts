@@ -58,7 +58,7 @@ function createSuccess<S>(success: S): Success<S> {
   return { success };
 }
 
-export class Result<F, S> {
+export class Result<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
   public when<V>(success: SuccessFn<S, V>, failure?: FailureFn<F, V>): Undefined<V> {
@@ -75,16 +75,16 @@ export class Result<F, S> {
     return undefined;
   }
 
-  public static failure<F>(value: F): Result<F, unknown> {
+  public static failure<F = unknown>(value: F): Result<F, unknown> {
     return new Result(createFailure<F>(value));
   }
 
-  public static success<S>(value: S): Result<unknown, S> {
+  public static success<S = unknown>(value: S): Result<unknown, S> {
     return new Result(createSuccess<S>(value));
   }
 }
 
-export class ResultPresent<F, S> {
+export class ResultPresent<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
   public when<V>(success: SuccessFn<S, V>, failure?: FailureFn<F, V>): V {
@@ -101,16 +101,16 @@ export class ResultPresent<F, S> {
     throw Error('No value is returned at runtime from Result');
   }
 
-  public static failure<F>(value: F): ResultPresent<F, unknown> {
+  public static failure<F = unknown>(value: F): ResultPresent<F, unknown> {
     return new ResultPresent(createFailure<F>(value));
   }
 
-  public static success<S>(value: S): ResultPresent<unknown, S> {
+  public static success<S = unknown>(value: S): ResultPresent<unknown, S> {
     return new ResultPresent(createSuccess<S>(value));
   }
 }
 
-export class ResultEmpty<F, S> {
+export class ResultEmpty<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
   public when(success: SuccessFn<S, void>, failure?: FailureFn<F, void>): void {
@@ -127,11 +127,11 @@ export class ResultEmpty<F, S> {
     }
   }
 
-  public static failure<F>(value: F): ResultEmpty<F, unknown> {
+  public static failure<F = unknown>(value: F): ResultEmpty<F, unknown> {
     return new ResultEmpty(createFailure<F>(value));
   }
 
-  public static success<S>(value: S): ResultEmpty<unknown, S> {
+  public static success<S = unknown>(value: S): ResultEmpty<unknown, S> {
     return new ResultEmpty(createSuccess<S>(value));
   }
 }
