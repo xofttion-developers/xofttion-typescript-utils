@@ -25,7 +25,7 @@ export abstract class Optional<T> {
     }
   }
 
-  public when<V>(present: PresentFn<T, V>, empty: EmptyFn<V>): Undefined<V> {
+  public when<V = unknown>(present: PresentFn<T, V>, empty: EmptyFn<V>): V {
     return this.isPresent() ? present(this.get()) : empty();
   }
 
