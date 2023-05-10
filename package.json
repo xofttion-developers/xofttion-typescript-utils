@@ -1,12 +1,12 @@
 {
   "name": "@xofttion/utils",
   "type": "commonjs",
-  "version": "4.9.17",
+  "version": "4.9.19",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/xofttion-utils.esm.js",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "module": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "node clean.js",

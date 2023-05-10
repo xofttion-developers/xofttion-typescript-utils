@@ -1,4 +1,5 @@
 export * from './array';
+export * from './async-state';
 export * from './date';
 export * from './date-elapsed';
 export * from './double';

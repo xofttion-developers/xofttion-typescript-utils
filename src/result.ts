@@ -75,11 +75,11 @@ export class Result<F = unknown, S = unknown> {
     return undefined;
   }
 
-  public static failure<F = unknown>(value: F): Result<F, unknown> {
+  public static failure<F = unknown>(value: F): Result<F, any> {
     return new Result(createFailure<F>(value));
   }
 
-  public static success<S = unknown>(value: S): Result<unknown, S> {
+  public static success<S = unknown>(value: S): Result<any, S> {
     return new Result(createSuccess<S>(value));
   }
 }
@@ -101,11 +101,11 @@ export class ResultPresent<F = unknown, S = unknown> {
     throw Error('No value is returned at runtime from Result');
   }
 
-  public static failure<F = unknown>(value: F): ResultPresent<F, unknown> {
+  public static failure<F = unknown>(value: F): ResultPresent<F, any> {
     return new ResultPresent(createFailure<F>(value));
   }
 
-  public static success<S = unknown>(value: S): ResultPresent<unknown, S> {
+  public static success<S = unknown>(value: S): ResultPresent<any, S> {
     return new ResultPresent(createSuccess<S>(value));
   }
 }
@@ -127,11 +127,11 @@ export class ResultEmpty<F = unknown, S = unknown> {
     }
   }
 
-  public static failure<F = unknown>(value: F): ResultEmpty<F, unknown> {
+  public static failure<F = unknown>(value: F): ResultEmpty<F, any> {
     return new ResultEmpty(createFailure<F>(value));
   }
 
-  public static success<S = unknown>(value: S): ResultEmpty<unknown, S> {
+  public static success<S = unknown>(value: S): ResultEmpty<any, S> {
     return new ResultEmpty(createSuccess<S>(value));
   }
 }

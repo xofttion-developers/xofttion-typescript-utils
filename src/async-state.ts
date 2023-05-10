@@ -107,15 +107,15 @@ export class AsyncState<L, F, S> {
     throw Error('No value is returned at runtime from AsyncState');
   }
 
-  public static loading<L>(value: L): AsyncState<L, unknown, unknown> {
+  public static loading<L>(value: L): AsyncState<L, any, any> {
     return new AsyncState(createLoading<L>(value));
   }
 
-  public static failure<F>(value: F): AsyncState<unknown, F, unknown> {
+  public static failure<F>(value: F): AsyncState<any, F, any> {
     return new AsyncState(createFailure<F>(value));
   }
 
-  public static success<S>(value: S): AsyncState<unknown, unknown, S> {
+  public static success<S>(value: S): AsyncState<any, any, S> {
     return new AsyncState(createSuccess<S>(value));
   }
 }

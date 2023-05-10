@@ -1,12 +1,12 @@
 {
   "name": "@xofttion/utils",
   "type": "commonjs",
-  "version": "4.9.17",
+  "version": "4.9.19",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "index.js",
+  "module": "index.js",
   "typings": "index.d.ts",
-  "module": "xofttion-utils.esm.js",
   "devDependencies": {
     "@types/jest": "^29.5.1",
     "@xofttion/types": "^4.9.2",
