@@ -13,6 +13,8 @@ type PromisesConfig<T extends any> = {
   success: (_: T[]) => void;
 };
 
+type Calleable<T> = Undefined<(...args: any) => T>;
+
 function clone<A>(object: A, caches: unknown[]): A {
   if (typeof object !== 'object') {
     return object;
@@ -108,7 +110,7 @@ export function promiseFrom<M>(value: M | Promise<M>): Promise<M> {
   return value instanceof Promise ? value : Promise.resolve(value);
 }
 
-export function promisesZip<T extends any>(promises: PromisesFn<T>[]): Promise<T[]> {
+export function promisesZip<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
   return promises.length
     ? new Promise((resolve, reject) => {
         executePromises({
@@ -124,4 +126,8 @@ export function promisesZip<T extends any>(promises: PromisesFn<T>[]): Promise<T
         });
       })
     : Promise.resolve([]);
+}
+
+export function callback<T = any>(call: Calleable<T>, ...args: any): Undefined<T> {
+  return typeof call !== 'function' ? undefined : call.apply(call, args);
 }

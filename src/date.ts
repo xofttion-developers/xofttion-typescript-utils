@@ -113,6 +113,25 @@ export function isAfterOrEqualsDate(date: Date, compareDate = new Date()): boole
   return date.getTime() <= compareDate.getTime();
 }
 
+export function isBetweenDate(
+  minDate: Date,
+  maxDate: Date,
+  compareDate = new Date()
+): boolean {
+  return isAfterDate(minDate, compareDate) && isBeforeDate(maxDate, compareDate);
+}
+
+export function isBetweenOrEqualsDate(
+  minDate: Date,
+  maxDate: Date,
+  compareDate = new Date()
+): boolean {
+  return (
+    isAfterOrEqualsDate(minDate, compareDate) ||
+    isBeforeOrEqualsDate(maxDate, compareDate)
+  );
+}
+
 export function getDifference(date: Date, compareDate = new Date()): number {
   return date.getTime() - compareDate.getTime();
 }
@@ -132,7 +151,7 @@ export function normalizeMinTime(date: Date): Date {
   return newDate;
 }
 
-export function normalizeTimeMax(date: Date): Date {
+export function normalizeMaxTime(date: Date): Date {
   const newDate = new Date(date.getTime());
 
   newDate.setHours(23);
