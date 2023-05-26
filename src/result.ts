@@ -54,10 +54,29 @@ function createSuccess<S>(success?: S): Success<S> {
   return { success };
 }
 
+interface Resolver<F, S, V> {
+  success: SuccessFn<S, V>;
+  failure?: FailureFn<F, V>;
+}
+
+interface ResolverFull<F, S, V> extends Resolver<F, S, V> {
+  failure: FailureFn<F, V>;
+}
+
+type Fold<F, S, V> = SuccessFn<S, V> | Resolver<F, S, V>;
+
 export class Result<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
-  public when<V>(success: SuccessFn<S, V>, failure?: FailureFn<F, V>): Undefined<V> {
+  public when<V>(resolver: ResolverFull<F, S, V>): Undefined<V>;
+  public when<V>(success: SuccessFn<S, V>, failure: FailureFn<F, V>): Undefined<V>;
+  public when<V>(success: Fold<F, S, V>, failure?: FailureFn<F, V>): Undefined<V> {
+    return typeof success === 'function'
+      ? this.fold({ success, failure })
+      : this.fold(success);
+  }
+
+  private fold<V>({ success, failure }: Resolver<F, S, V>): Undefined<V> {
     /* istanbul ignore else */
     if (isSuccess(this.value)) {
       return success(getResultValue(this.value));
@@ -83,7 +102,15 @@ export class Result<F = unknown, S = unknown> {
 export class ResultPresent<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
-  public when<V>(success: SuccessFn<S, V>, failure?: FailureFn<F, V>): V {
+  public when<V>(resolver: ResolverFull<F, S, V>): V;
+  public when<V>(success: SuccessFn<S, V>, failure: FailureFn<F, V>): V;
+  public when<V>(success: Fold<F, S, V>, failure?: FailureFn<F, V>): V {
+    return typeof success === 'function'
+      ? this.fold({ success, failure })
+      : this.fold(success);
+  }
+
+  private fold<V>({ success, failure }: Resolver<F, S, V>): V {
     /* istanbul ignore else */
     if (isSuccess(this.value)) {
       return success(getResultValue(this.value));
@@ -109,7 +136,15 @@ export class ResultPresent<F = unknown, S = unknown> {
 export class ResultEmpty<F = unknown, S = unknown> {
   private constructor(private value: ResultValue<F, S>) {}
 
-  public when(success: SuccessFn<S, void>, failure?: FailureFn<F, void>): void {
+  public when<V>(resolver: ResolverFull<F, S, V>): void;
+  public when<V>(success: SuccessFn<S, V>, failure: FailureFn<F, V>): void;
+  public when<V>(success: Fold<F, S, V>, failure?: FailureFn<F, V>): void {
+    return typeof success === 'function'
+      ? this.fold({ success, failure })
+      : this.fold(success);
+  }
+
+  private fold<V>({ success, failure }: Resolver<F, S, V>): void {
     /* istanbul ignore else */
     if (isSuccess(this.value)) {
       success(getResultValue(this.value));

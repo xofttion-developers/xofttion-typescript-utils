@@ -77,26 +77,51 @@ function createSuccess<R>(success?: R): Success<R> {
   return { success };
 }
 
+interface Resolver<L, F, S, V> {
+  loading: LoadingFn<L, V>;
+  failure?: FailureFn<F, V>;
+  success?: SuccessFn<S, V>;
+}
+
+interface ResolverFull<L, F, S, V> extends Resolver<L, F, S, V> {
+  failure: FailureFn<F, V>;
+  success: SuccessFn<S, V>;
+}
+
+type Fold<L, F, S, V> = LoadingFn<L, V> | Resolver<L, F, S, V>;
+
 export class AsyncState<L, F, S> {
   private constructor(private value: ResultValue<L, F, S>) {}
 
+  public when<V>(resolver: ResolverFull<L, F, S, V>): V;
   public when<V>(
     loading: LoadingFn<L, V>,
     success: SuccessFn<S, V>,
     failure: FailureFn<F, V>
+  ): V;
+  public when<V>(
+    loading: Fold<L, F, S, V>,
+    success?: SuccessFn<S, V>,
+    failure?: FailureFn<F, V>
   ): V {
+    return typeof loading === 'function'
+      ? this.fold({ loading, success, failure })
+      : this.fold(loading);
+  }
+
+  private fold<V>({ loading, success, failure }: Resolver<L, F, S, V>): V {
     /* istanbul ignore else */
     if (isLoading(this.value)) {
       return loading(getValueAsyncState(this.value));
     }
 
     /* istanbul ignore else */
-    if (isSuccess(this.value)) {
+    if (isSuccess(this.value) && success) {
       return success(getValueAsyncState(this.value));
     }
 
     /* istanbul ignore else */
-    if (isFailure(this.value)) {
+    if (isFailure(this.value) && failure) {
       return failure(getValueAsyncState(this.value));
     }
 
