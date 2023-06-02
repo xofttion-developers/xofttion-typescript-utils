@@ -11,7 +11,7 @@ export class Sealed<R, T extends StateSealed<R>> {
     const handler = resolver[this.key];
 
     if (handler) {
-      handler(this.value);
+      return handler(this.value);
     }
 
     throw Error('Could not resolve call to get a result');

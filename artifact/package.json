@@ -1,7 +1,7 @@
 {
   "name": "@xofttion/utils",
   "type": "commonjs",
-  "version": "4.9.23",
+  "version": "4.9.24",
   "author": "Daniel Andrés Castillo Pedroza",
   "license": "MIT",
   "main": "index.js",
