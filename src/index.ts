@@ -6,6 +6,7 @@ export * from './double';
 export * from './optional';
 export * from './queque';
 export * from './result';
+export * from './sealed';
 export * from './scroller';
 export * from './string';
 export * from './utils';
