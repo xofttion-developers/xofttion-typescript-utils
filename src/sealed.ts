@@ -2,22 +2,16 @@ export interface StateSealed<R> {
   [key: string]: (value?: any) => R;
 }
 
-type Constructor<C, T> = { new (key: keyof T, value?: any): C };
-
-export class Sealed<R, T extends StateSealed<R>> {
-  constructor(private key: keyof T, private value?: any) {}
+export class Sealed<R, V, T extends StateSealed<R>> {
+  protected constructor(private key: keyof T, private value?: V) {}
 
   public when(resolver: T): R {
     const handler = resolver[this.key];
 
     if (handler) {
-      return handler(this.value);
+      return handler(this.value as any);
     }
 
-    throw Error('Could not resolve call to get a result');
-  }
-
-  public static create<C, T>(this: Constructor<C, T>, key: keyof T, value?: any): C {
-    return new this(key, value);
+    throw Error('Sealed class could not resolve call');
   }
 }
