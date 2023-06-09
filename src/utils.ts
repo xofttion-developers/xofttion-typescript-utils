@@ -13,6 +13,13 @@ type PromisesConfig<T extends any> = {
   success: (_: T[]) => void;
 };
 
+interface ArrayToMapProps<E, V> {
+  elements: E[];
+  getIdentifier: (element: E) => string;
+  factory: (element: E) => V;
+  reducer: (element: E, currentValue: V) => void;
+}
+
 type Calleable<T> = Undefined<(...args: any) => T>;
 
 function clone<A>(object: A, caches: unknown[]): A {
@@ -126,6 +133,34 @@ export function promisesZip<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
         });
       })
     : Promise.resolve([]);
+}
+
+export function arrayToMapReduce<E, V>(props: ArrayToMapProps<E, V>): V[] {
+  const { elements, factory, getIdentifier, reducer } = props;
+
+  const map = new Map<string, V>();
+
+  function getCurrentValue(element: E): V {
+    const identifier = getIdentifier(element);
+
+    const value = map.get(identifier);
+
+    if (value) {
+      return value;
+    }
+
+    const newValue = factory(element);
+
+    map.set(identifier, newValue);
+
+    return newValue;
+  }
+
+  elements.forEach((element) => {
+    reducer(element, getCurrentValue(element));
+  });
+
+  return Array.from(map.entries()).map(([_, value]) => value);
 }
 
 export function callback<T = any>(call: Calleable<T>, ...args: any): Undefined<T> {
