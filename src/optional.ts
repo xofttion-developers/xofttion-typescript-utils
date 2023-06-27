@@ -2,7 +2,7 @@ import { isDefined } from './utils';
 
 type EmptyFn<V> = () => V;
 
-type PresentFn<P, V> = (_: P) => V;
+type PresentFn<P, V> = (value: P) => V;
 
 export abstract class Optional<T> {
   protected constructor(public readonly value?: T) {}
@@ -13,15 +13,15 @@ export abstract class Optional<T> {
 
   public abstract get(): T;
 
-  public present(call: (value: T) => void): void {
+  public present(callback: (value: T) => void): void {
     if (this.isPresent()) {
-      call(this.get());
+      callback(this.get());
     }
   }
 
-  public empty(call: () => void): void {
+  public empty(callback: () => void): void {
     if (this.isEmpty()) {
-      call();
+      callback();
     }
   }
 
@@ -47,8 +47,8 @@ export abstract class Optional<T> {
 }
 
 class PresentOptional<T> extends Optional<T> {
-  constructor(private valuePresent: T) {
-    super(valuePresent);
+  constructor(private presentValue: T) {
+    super(presentValue);
   }
 
   public isPresent(): boolean {
@@ -60,7 +60,7 @@ class PresentOptional<T> extends Optional<T> {
   }
 
   public get(): T {
-    return this.valuePresent;
+    return this.presentValue;
   }
 }
 
