@@ -13,16 +13,12 @@ export abstract class Optional<T> {
 
   public abstract get(): T;
 
-  public present(callback: (value: T) => void): void {
-    if (this.isPresent()) {
-      callback(this.get());
-    }
+  public present<V = unknown>(callback: (value: T) => V): Undefined<V> {
+    return this.isPresent() ? callback(this.get()) : undefined;
   }
 
-  public empty(callback: () => void): void {
-    if (this.isEmpty()) {
-      callback();
-    }
+  public empty<V = unknown>(callback: () => V): Undefined<V> {
+    return this.isEmpty() ? callback() : undefined;
   }
 
   public when<V = unknown>(present: PresentFn<T, V>, empty: EmptyFn<V>): V {
