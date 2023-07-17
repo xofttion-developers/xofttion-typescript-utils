@@ -44,10 +44,8 @@ export const DAYS_NAME = [
 
 export const DAYS_NAME_MIN = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 
-type FnFormatDate = (date: Date) => string;
-
 interface DateFormat {
-  [key: string]: FnFormatDate;
+  [key: string]: (date: Date) => string;
 }
 
 const DATE_FORMATTERS: DateFormat = {

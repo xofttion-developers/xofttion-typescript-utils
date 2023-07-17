@@ -1,6 +1,12 @@
 type CallEach = <T>(el: T, index: number) => Undefined<boolean>;
 type CallStop = <T>(el: T, index: number) => void;
 
+interface EachArray<T> {
+  array: T[];
+  each: CallEach;
+  stop?: CallStop;
+}
+
 class ForEachBreakException<T> extends Error {
   constructor(public readonly element: T, public readonly index: number) {
     super('ForEach Exception');
@@ -33,20 +39,22 @@ export function removeElement<T>(array: T[], value: number | T): T[] {
   );
 }
 
-export function arrayEach<T>(array: T[], each: CallEach, stop?: CallStop): boolean {
+export function arrayEach<T>(props: EachArray<T>): boolean {
+  const { array, each, stop } = props;
+
   try {
     array.forEach((element, index) => {
-      const stop = each(element, index);
-
-      if (stop) {
+      if (each(element, index)) {
         throw new ForEachBreakException(element, index);
       }
     });
 
     return true;
   } catch (error) {
-    if (stop && error instanceof ForEachBreakException<T>) {
-      stop(error.element, error.index);
+    if (stop && error instanceof ForEachBreakException) {
+      const { element, index } = error;
+
+      stop(element, index);
     }
 
     return false;
@@ -54,7 +62,7 @@ export function arrayEach<T>(array: T[], each: CallEach, stop?: CallStop): boole
 }
 
 export function reduceDistinct<T, V>(array: T[], reducer: (value: T) => V): V[] {
-  return array.reduce((result, element) => {
+  return array.reduce((result: V[], element) => {
     const value = reducer(element);
 
     if (!result.includes(value)) {
@@ -62,5 +70,5 @@ export function reduceDistinct<T, V>(array: T[], reducer: (value: T) => V): V[] 
     }
 
     return result;
-  }, [] as V[]);
+  }, []);
 }
