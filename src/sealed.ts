@@ -13,7 +13,7 @@ export class Sealed<R, V, T extends StateSealed<R>> {
     }
 
     if (handler) {
-      return handler(this.value as any);
+      return handler(this.value);
     }
 
     throw Error('Sealed class could not resolve call');

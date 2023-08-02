@@ -4,8 +4,8 @@ export class Either<S, F, V = any> extends Sealed<
   V,
   S | F,
   {
-    success: (state?: S) => V;
-    failure: (state?: F) => V;
+    success: (state: S) => V;
+    failure: (state: F) => V;
   }
 > {
   public static success<S>(value?: S): Either<S, any> {
